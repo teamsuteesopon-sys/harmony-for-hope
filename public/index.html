@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Silent Auction — Harmony for Hope · ISB</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="header">
+    <nav class="navbar">
+      <a href="/" class="logo">
+        <img src="logo-icon.png" class="logo-icon" alt="Harmony for Hope logo">
+        <span>
+          <span class="logo-text">Harmony for Hope</span>
+          <span class="logo-sub">International School Bangkok</span>
+        </span>
+      </a>
+      <div class="nav-stats">
+        <div class="nav-stat">
+          <span class="nav-stat-val" id="nav-raised">$0</span>
+          <span class="nav-stat-label">Raised</span>
+        </div>
+        <div class="nav-stat-sep"></div>
+        <div class="nav-stat">
+          <span class="nav-stat-val" id="nav-bids">0</span>
+          <span class="nav-stat-label">Total Bids</span>
+        </div>
+        <div class="nav-stat-sep"></div>
+        <div class="nav-stat">
+          <span class="nav-stat-val" id="nav-viewers">0</span>
+          <span class="nav-stat-label">Online Now</span>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Page title -->
+    <section class="auction-hero">
+      <canvas id="sparkles"></canvas>
+      <div class="auction-hero-inner">
+        <p class="auction-eyebrow">Harmony for Hope · ISB</p>
+        <h1 class="auction-title">Silent Auction</h1>
+        <p class="auction-sub">Bid on student artworks — all proceeds go to the <strong>iCare Foundation</strong>, funding <strong>75 children</strong> so they can complete their high school education.</p>
+      </div>
+    </section>
+
+    <!-- Stats bar -->
+    <div class="stats-bar">
+      <div class="stats-bar-inner">
+        <div class="stats-item">
+          <span class="stats-num" id="stat-raised">$0</span>
+          <span class="stats-label">Total Raised</span>
+        </div>
+        <div class="stats-div"></div>
+        <div class="stats-item">
+          <span class="stats-num" id="stat-bids">0</span>
+          <span class="stats-label">Bids Placed</span>
+        </div>
+        <div class="stats-div"></div>
+        <div class="stats-item">
+          <span class="stats-num" id="stat-items">0 / 25</span>
+          <span class="stats-label">Items Active</span>
+        </div>
+        <div class="stats-div"></div>
+        <div class="stats-item">
+          <span class="stats-num" id="stat-viewers">0</span>
+          <span class="stats-label">Viewing Live</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gallery -->
+    <section class="gallery-section" id="gallery">
+      <div class="gallery-header">
+        <h2 class="section-title">All Works</h2>
+        <div class="filter-tabs" id="filter-tabs">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="Painting">Paintings</button>
+          <button class="filter-btn" data-filter="Photography">Photography</button>
+          <button class="filter-btn" data-filter="Voucher">Vouchers</button>
+        </div>
+      </div>
+      <div class="artworks-grid" id="artworks-grid">
+        <div class="loading-grid">
+          <div class="spinner"></div>
+          <p>Loading artworks…</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live bid feed -->
+    <section class="feed-section">
+      <h2 class="section-title">Live Bid Feed</h2>
+      <div class="feed-list" id="global-feed">
+        <div class="feed-empty">Waiting for bids…</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="logo-icon.png" class="footer-logo-img" alt="Harmony for Hope logo">
+        <span class="logo-text">Harmony for Hope</span>
+      </div>
+      <p class="footer-mission">All proceeds benefit music education at International School Bangkok.</p>
+      <p class="footer-copy">© 2026 Harmony for Hope · ISB. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    (function() {
+      const canvas = document.getElementById('sparkles');
+      const ctx    = canvas.getContext('2d');
+      let W, H, particles = [];
+
+      function resize() {
+        const hero = canvas.parentElement;
+        W = canvas.width  = hero.offsetWidth;
+        H = canvas.height = hero.offsetHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      function rand(a, b) { return a + Math.random() * (b - a); }
+
+      function spawnParticle() {
+        return {
+          x: rand(0, W), y: rand(0, H),
+          r: rand(1, 2.8), alpha: 0,
+          maxAlpha: rand(0.4, 0.9),
+          speed: rand(0.005, 0.015), phase: 0,
+          vy: rand(-0.12, -0.04), vx: rand(-0.06, 0.06),
+        };
+      }
+
+      for (let i = 0; i < 80; i++) {
+        const p = spawnParticle();
+        p.alpha = rand(0, p.maxAlpha);
+        p.phase = rand(0, Math.PI * 2);
+        particles.push(p);
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        particles.forEach(p => {
+          p.phase += p.speed;
+          p.alpha  = p.maxAlpha * (0.5 + 0.5 * Math.sin(p.phase));
+          p.x += p.vx; p.y += p.vy;
+          if (p.y < -5) { Object.assign(p, spawnParticle()); p.y = H + 5; }
+          ctx.save();
+          ctx.globalAlpha = p.alpha;
+          const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 2);
+          g.addColorStop(0,   'rgba(255,230,120,1)');
+          g.addColorStop(0.4, 'rgba(212,168,48,0.6)');
+          g.addColorStop(1,   'rgba(180,120,20,0)');
+          ctx.fillStyle = g;
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 2, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = 'rgba(255,245,200,0.95)';
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 0.45, 0, Math.PI * 2); ctx.fill();
+          ctx.restore();
+        });
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 280">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="240" y2="280" gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="#f7e098"/>
+      <stop offset="45%"  stop-color="#d4a830"/>
+      <stop offset="100%" stop-color="#a07018"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ── Wing feathers (left side, 3 curved blades) ── -->
+  <path fill="url(#g)"
+    d="M 90,66  C 74,44  50,38  24,46  C 48,57  70,66  84,82  Z"/>
+  <path fill="url(#g)" opacity="0.92"
+    d="M 86,98  C 64,80  40,76  18,86  C 42,93  64,99  78,113 Z"/>
+  <path fill="url(#g)" opacity="0.85"
+    d="M 82,130 C 62,120 40,120 20,130 C 42,135 63,137 78,148 Z"/>
+
+  <!-- ── Face silhouette — left profile, facing right ── -->
+  <path fill="url(#g)" d="
+    M  96,26
+    C 114,16  134,16  148,30
+    C 158,42  160,58  160,70
+    C 160,80  164,88  160,100
+    C 156,110 150,116 154,129
+    C 158,142 148,160 130,164
+    C 120,168 106,161 102,149
+    C  98,137 106,122 108,111
+    C 102,100  94,86   94,68
+    C  94,46   80,34   96,26 Z
+  "/>
+
+  <!-- Neck -->
+  <path fill="url(#g)" d="
+    M 106,164 C 104,176 104,188 106,200
+    L 122,200
+    C 124,188 124,176 118,164 Z
+  "/>
+
+  <!-- ── Treble clef — tall stroke, overlapping right side of face ── -->
+  <path
+    fill="none"
+    stroke="url(#g)"
+    stroke-width="14"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    d="
+      M 178,60
+      C 190,34  212,38  208,62
+      C 204,78  190,85  182,97
+      C 174,109 172,125 179,138
+      C 186,151 203,155 213,145
+      C 223,135 222,117 213,105
+      C 204,93  188,91  179,101
+      C 170,111 172,130 181,138
+      L 181,234
+      C 181,252 169,263 157,257
+      C 145,251 144,235 155,227
+      C 166,219 180,228 179,239
+    "
+  />
+</svg>

@@ -1,0 +1,7 @@
+flask==3.1.2
+flask-socketio==5.6.1
+python-socketio==5.16.1
+eventlet==0.40.1
+qrcode[pil]==8.1
+Pillow==11.2.1
+gunicorn==23.0.0

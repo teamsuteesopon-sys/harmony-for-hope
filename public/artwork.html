@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artwork — Harmony for Hope · ISB</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div class="live-bar">
+    <div class="live-bar-inner">
+      <span class="live-pill"><span class="live-dot"></span>LIVE</span>
+      <span class="live-event">Harmony for Hope — Live Charity Auction</span>
+      <span class="live-date">Sun, June 7 · 18:30 · ISB Theater</span>
+    </div>
+  </div>
+
+  <header class="header">
+    <nav class="navbar">
+      <a href="/" class="logo">
+        <img src="logo-icon.png" class="logo-icon" alt="Harmony for Hope logo">
+        <span>
+          <span class="logo-text">Harmony for Hope</span>
+          <span class="logo-sub">International School Bangkok</span>
+        </span>
+      </a>
+      <a href="/" class="btn-back">← Back to Gallery</a>
+    </nav>
+  </header>
+
+  <main class="artwork-main">
+    <div id="artwork-loading" class="artwork-loading">
+      <div class="spinner"></div>
+      <p>Loading artwork…</p>
+    </div>
+
+    <div id="artwork-content" class="artwork-content" style="display:none">
+
+      <!-- Top: visual + info -->
+      <div class="artwork-top">
+        <div class="artwork-visual-wrap">
+          <div class="artwork-visual" id="artwork-visual">
+            <canvas class="artwork-canvas" id="artwork-canvas"></canvas>
+            <div class="artwork-number" id="artwork-number"></div>
+          </div>
+          <div class="artwork-meta-pills">
+            <span class="pill" id="meta-category"></span>
+            <span class="pill" id="meta-medium"></span>
+            <span class="pill" id="meta-size"></span>
+          </div>
+        </div>
+
+        <div class="artwork-info">
+          <p class="artwork-artist" id="artwork-artist"></p>
+          <h1 class="artwork-title" id="artwork-title"></h1>
+          <p class="artwork-desc" id="artwork-desc"></p>
+
+          <div class="bid-display">
+            <div class="bid-current-wrap">
+              <span class="bid-label">Current Bid</span>
+              <span class="bid-current" id="current-bid">$0</span>
+              <span class="bid-count" id="bid-count">0 bids</span>
+            </div>
+            <div id="last-bidder-wrap" style="display:none">
+              <span class="bid-label">Last bidder</span>
+              <span class="bid-last-name" id="last-bidder-name"></span>
+            </div>
+          </div>
+
+          <div class="bid-form-card">
+            <h3 class="bid-form-title">Place Your Bid</h3>
+            <p class="bid-form-hint" id="bid-minimum-hint"></p>
+            <form class="bid-form" id="bid-form" autocomplete="off">
+              <div class="form-group">
+                <label class="form-label" for="bidder-name">Your Name</label>
+                <input class="form-input" id="bidder-name" type="text" placeholder="Enter your name" maxlength="50">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="bid-amount">Bid Amount (THB)</label>
+                <div class="input-prefix-wrap">
+                  <span class="input-prefix">฿</span>
+                  <input class="form-input input-with-prefix" id="bid-amount" type="number" placeholder="0" min="0" step="1">
+                </div>
+              </div>
+              <div class="quick-bids" id="quick-bids"></div>
+              <button class="btn-bid" id="bid-btn" type="submit">Place Bid</button>
+              <p class="bid-form-error" id="bid-error"></p>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom: history + QR -->
+      <div class="artwork-bottom">
+        <div class="bid-history-card">
+          <h2 class="card-title">Bid History</h2>
+          <div class="bid-history-list" id="bid-history">
+            <div class="history-empty">No bids yet — be the first!</div>
+          </div>
+        </div>
+
+        <div class="qr-card" id="qr-card">
+          <h2 class="card-title">Scan to Bid</h2>
+          <p class="qr-subtitle">Share this artwork or scan from your phone at the ISB venue</p>
+          <div class="qr-wrap">
+            <div class="qr-loading" id="qr-loading"><div class="spinner spinner-sm"></div></div>
+            <img class="qr-img" id="qr-img" alt="QR Code" style="display:none">
+          </div>
+          <div class="qr-artwork-label" id="qr-artwork-label"></div>
+          <p class="qr-url" id="qr-url"></p>
+          <button class="btn-qr-print" onclick="printQR()">🖨 Print QR Card</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Print-only QR card -->
+  <div class="print-qr-card" id="print-qr-card">
+    <div class="print-logo">♪ HARMONY FOR HOPE</div>
+    <div class="print-tagline">HONORING OUR LEGACY · INSPIRING THE FUTURE</div>
+    <img id="print-qr-img" alt="QR Code">
+    <div class="print-artwork-title" id="print-artwork-title"></div>
+    <div class="print-artwork-artist" id="print-artwork-artist"></div>
+    <p class="print-instructions">Scan to bid online · International School Bangkok</p>
+    <p class="print-url" id="print-url"></p>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="js/artwork.js"></script>
+</body>
+</html>
