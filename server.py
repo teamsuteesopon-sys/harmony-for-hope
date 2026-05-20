@@ -139,13 +139,22 @@ def api_artwork(artwork_id):
 def api_bid():
     global active_connections
     data = request.get_json(silent=True) or {}
-    artwork_id = data.get("artworkId")
-    amount = data.get("amount")
-    bidder_name = str(data.get("bidderName") or "Anonymous").strip()[:50]
-    bidder_name = bidder_name.replace("<", "").replace(">", "") or "Anonymous"
+    artwork_id  = data.get("artworkId")
+    amount      = data.get("amount")
+    first_name  = str(data.get("firstName")  or "").strip()[:50].replace("<","").replace(">","")
+    last_name   = str(data.get("lastName")   or "").strip()[:50].replace("<","").replace(">","")
+    mobile      = str(data.get("mobile")     or "").strip()[:30].replace("<","").replace(">","")
+    email       = str(data.get("email")      or "").strip()[:100].replace("<","").replace(">","")
+    bidder_name = f"{first_name} {last_name}".strip() or "Anonymous"
 
     if artwork_id is None or amount is None:
         return jsonify({"error": "artworkId and amount are required"}), 400
+    if not first_name or not last_name:
+        return jsonify({"error": "First and last name are required"}), 400
+    if not mobile:
+        return jsonify({"error": "Mobile number is required"}), 400
+    if not email or "@" not in email:
+        return jsonify({"error": "A valid email address is required"}), 400
 
     try:
         artwork_id = int(artwork_id)
@@ -161,15 +170,19 @@ def api_bid():
     min_bid = d["currentBid"] + a["minIncrement"]
 
     if amount < min_bid:
-        return jsonify({"error": f"Minimum bid is ${min_bid:,.0f}", "minBid": min_bid}), 400
+        return jsonify({"error": f"Minimum bid is ฿{min_bid:,.0f}", "minBid": min_bid}), 400
 
     import time
     from datetime import datetime, timezone
     bid = {
-        "id": int(time.time() * 1000),
-        "amount": amount,
-        "bidderName": bidder_name,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "id":          int(time.time() * 1000),
+        "amount":      amount,
+        "bidderName":  bidder_name,
+        "firstName":   first_name,
+        "lastName":    last_name,
+        "mobile":      mobile,
+        "email":       email,
+        "timestamp":   datetime.now(timezone.utc).isoformat(),
     }
     d["currentBid"] = amount
     d["bids"].insert(0, bid)

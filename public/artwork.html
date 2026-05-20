@@ -75,9 +75,23 @@
             <h3 class="bid-form-title">Place Your Bid</h3>
             <p class="bid-form-hint" id="bid-minimum-hint"></p>
             <form class="bid-form" id="bid-form" autocomplete="off">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="bidder-firstname">First Name</label>
+                  <input class="form-input" id="bidder-firstname" type="text" placeholder="First name" maxlength="50" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="bidder-lastname">Last Name</label>
+                  <input class="form-input" id="bidder-lastname" type="text" placeholder="Last name" maxlength="50" required>
+                </div>
+              </div>
               <div class="form-group">
-                <label class="form-label" for="bidder-name">Your Name</label>
-                <input class="form-input" id="bidder-name" type="text" placeholder="Enter your name" maxlength="50">
+                <label class="form-label" for="bidder-mobile">Mobile Number</label>
+                <input class="form-input" id="bidder-mobile" type="tel" placeholder="e.g. 081-234-5678" maxlength="20" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="bidder-email">Email Address</label>
+                <input class="form-input" id="bidder-email" type="email" placeholder="your@email.com" maxlength="100" required>
               </div>
               <div class="form-group">
                 <label class="form-label" for="bid-amount">Bid Amount (THB)</label>
@@ -87,6 +101,7 @@
                 </div>
               </div>
               <div class="quick-bids" id="quick-bids"></div>
+              <p class="bid-consent">By placing a bid, you consent to your contact details being used solely for auction purposes in accordance with PDPA.</p>
               <button class="btn-bid" id="bid-btn" type="submit">Place Bid</button>
               <p class="bid-form-error" id="bid-error"></p>
             </form>

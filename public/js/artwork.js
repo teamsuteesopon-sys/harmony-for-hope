@@ -168,10 +168,17 @@ async function handleBid(e) {
   e.preventDefault();
   const errorEl = document.getElementById('bid-error');
   const btn = document.getElementById('bid-btn');
-  const name   = document.getElementById('bidder-name').value.trim();
-  const amount = parseFloat(document.getElementById('bid-amount').value);
+
+  const firstName = document.getElementById('bidder-firstname').value.trim();
+  const lastName  = document.getElementById('bidder-lastname').value.trim();
+  const mobile    = document.getElementById('bidder-mobile').value.trim();
+  const email     = document.getElementById('bidder-email').value.trim();
+  const amount    = parseFloat(document.getElementById('bid-amount').value);
 
   errorEl.textContent = '';
+  if (!firstName || !lastName) { errorEl.textContent = 'Please enter your first and last name.'; return; }
+  if (!mobile)  { errorEl.textContent = 'Please enter your mobile number.'; return; }
+  if (!email || !email.includes('@')) { errorEl.textContent = 'Please enter a valid email address.'; return; }
   if (!amount || isNaN(amount)) { errorEl.textContent = 'Please enter a bid amount.'; return; }
 
   btn.disabled = true;
@@ -181,7 +188,15 @@ async function handleBid(e) {
     const res = await fetch('/api/bid', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ artworkId, amount, bidderName: name || 'Anonymous' })
+      body: JSON.stringify({
+        artworkId,
+        amount,
+        bidderName: `${firstName} ${lastName}`,
+        firstName,
+        lastName,
+        mobile,
+        email
+      })
     });
     const data = await res.json();
     if (!res.ok) {
