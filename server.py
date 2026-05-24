@@ -393,6 +393,28 @@ def api_stats():
     return jsonify(get_stats())
 
 
+ADMIN_PASSWORD = "harmony2026"
+
+@app.route("/api/admin/bids")
+def api_admin_bids():
+    if request.args.get("pw") != ADMIN_PASSWORD:
+        return jsonify({"error": "Unauthorized"}), 401
+    result = []
+    for a in ARTWORKS:
+        d = bid_data[a["id"]]
+        result.append({
+            **a,
+            "currentBid": d["currentBid"],
+            "bids": d["bids"],
+        })
+    return jsonify(result)
+
+
+@app.route("/admin")
+def admin_page():
+    return send_from_directory("public", "admin.html")
+
+
 @app.route("/api/qr/home")
 def api_qr_home():
     host = request.host

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Harmony for Hope</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #060402; --bg2: #0f0c06; --bg-card: #13100a;
+      --gold: #d4a830; --gold-light: #f0c84a; --gold-pale: #f7e098;
+      --text: #f5f0e8; --muted: #8a7a5a; --border: rgba(212,168,48,0.2);
+      --error: #ef4444; --success: #22c55e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; min-height: 100vh; }
+    a { color: var(--gold); text-decoration: none; }
+
+    /* ── Login ── */
+    .login-wrap {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
+    }
+    .login-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 40px; width: 100%; max-width: 380px; text-align: center;
+    }
+    .login-logo { font-size: 32px; margin-bottom: 8px; }
+    .login-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .login-sub { color: var(--muted); font-size: 13px; margin-bottom: 28px; }
+    .login-input {
+      width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); font-family: inherit; font-size: 15px;
+      padding: 12px 16px; margin-bottom: 14px; outline: none;
+    }
+    .login-input:focus { border-color: var(--gold); }
+    .login-btn {
+      width: 100%; background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border: none; border-radius: 8px; color: #1a0e00; font-family: inherit;
+      font-size: 15px; font-weight: 700; padding: 13px; cursor: pointer;
+    }
+    .login-error { color: var(--error); font-size: 13px; margin-top: 12px; }
+
+    /* ── Dashboard ── */
+    #dashboard { display: none; }
+    .topbar {
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      padding: 14px 28px; display: flex; align-items: center;
+      justify-content: space-between; position: sticky; top: 0; z-index: 50;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 12px; }
+    .topbar-logo { font-size: 20px; font-weight: 700; color: var(--gold); }
+    .topbar-sub { font-size: 12px; color: var(--muted); }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .btn {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border: none; border-radius: 8px; color: #1a0e00; cursor: pointer;
+      font-family: inherit; font-size: 13px; font-weight: 600; padding: 8px 16px;
+    }
+    .btn-outline {
+      background: transparent; border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text); cursor: pointer; font-family: inherit; font-size: 13px;
+      font-weight: 500; padding: 8px 16px;
+    }
+    .live-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--success);
+      animation: pulse 1.4s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.65)} }
+
+    .main { padding: 28px; max-width: 1400px; margin: 0 auto; }
+
+    /* ── Stats ── */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px; margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 20px 24px;
+    }
+    .stat-val { font-size: 28px; font-weight: 700; color: var(--gold); }
+    .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* ── Section title ── */
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
+    }
+    .section-title { font-size: 16px; font-weight: 700; }
+
+    /* ── Items table ── */
+    .table-wrap { overflow-x: auto; margin-bottom: 40px; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: 0.8px;
+      padding: 10px 14px; text-align: left; text-transform: uppercase; white-space: nowrap;
+    }
+    tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); transition: background .15s; }
+    tbody tr:hover { background: rgba(212,168,48,0.04); }
+    td { padding: 12px 14px; vertical-align: top; }
+    .lot { color: var(--gold); font-weight: 600; font-size: 12px; white-space: nowrap; }
+    .item-title { font-weight: 600; }
+    .item-artist { color: var(--muted); font-size: 12px; margin-top: 2px; }
+    .bid-amount { color: var(--gold-pale); font-weight: 700; white-space: nowrap; }
+    .no-bids { color: var(--muted); font-size: 12px; }
+    .contact-name { font-weight: 600; }
+    .contact-detail { color: var(--muted); font-size: 12px; margin-top: 2px; }
+    .badge {
+      display: inline-block; border-radius: 999px; font-size: 11px; font-weight: 600;
+      padding: 2px 10px;
+    }
+    .badge-active { background: rgba(34,197,94,.15); color: #4ade80; border: 1px solid rgba(34,197,94,.3); }
+    .badge-none   { background: rgba(255,255,255,.05); color: var(--muted); border: 1px solid var(--border); }
+    .expand-btn {
+      background: transparent; border: 1px solid var(--border); border-radius: 6px;
+      color: var(--muted); cursor: pointer; font-size: 11px; padding: 4px 10px;
+    }
+    .expand-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ── Bid history rows ── */
+    .history-row { display: none; }
+    .history-row.open { display: table-row; }
+    .history-inner {
+      background: rgba(0,0,0,.3); border-radius: 8px; margin: 0 8px 8px; overflow: hidden;
+    }
+    .history-inner table thead th { background: transparent; }
+    .history-inner table tbody tr:hover { background: transparent; }
+
+    /* ── Toast ── */
+    .toast-wrap {
+      position: fixed; bottom: 24px; right: 24px; display: flex;
+      flex-direction: column; gap: 10px; z-index: 999;
+    }
+    .toast {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px 18px; display: flex; align-items: center; gap: 10px;
+      animation: slide-in .3s ease;
+    }
+    @keyframes slide-in { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+    .toast-title { font-weight: 600; font-size: 13px; }
+    .toast-body  { font-size: 12px; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+<!-- ── Login ── -->
+<div class="login-wrap" id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">🎨</div>
+    <div class="login-title">Admin Dashboard</div>
+    <div class="login-sub">Harmony for Hope · ISB Silent Auction</div>
+    <input class="login-input" id="pw-input" type="password" placeholder="Enter admin password" autofocus>
+    <button class="login-btn" onclick="tryLogin()">Sign In</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ── Dashboard ── -->
+<div id="dashboard">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="live-dot"></div>
+      <div>
+        <div class="topbar-logo">Harmony for Hope — Admin</div>
+        <div class="topbar-sub">ISB Silent Auction · Live Dashboard</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-outline" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="btn" onclick="refreshData()">↻ Refresh</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-val" id="s-raised">฿0</div>
+        <div class="stat-label">Total Raised</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="s-bids">0</div>
+        <div class="stat-label">Total Bids</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="s-items">0</div>
+        <div class="stat-label">Items with Bids</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="s-viewers">0</div>
+        <div class="stat-label">Online Now</div>
+      </div>
+    </div>
+
+    <!-- Bids Table -->
+    <div class="section-header">
+      <div class="section-title">All Items & Bids</div>
+    </div>
+    <div class="table-wrap">
+      <table id="main-table">
+        <thead>
+          <tr>
+            <th>Lot</th>
+            <th>Item</th>
+            <th>Starting Bid</th>
+            <th>Current Bid</th>
+            <th>Top Bidder</th>
+            <th>Contact</th>
+            <th>Bids</th>
+            <th>History</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toasts"></div>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+  const ADMIN_PW = 'harmony2026';
+  let allData = [];
+  let socket;
+
+  // ── Login ──
+  function tryLogin() {
+    const pw = document.getElementById('pw-input').value;
+    if (pw === ADMIN_PW) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      initDashboard();
+    } else {
+      document.getElementById('login-error').textContent = 'Incorrect password.';
+    }
+  }
+  document.getElementById('pw-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') tryLogin();
+  });
+
+  // ── Init ──
+  async function initDashboard() {
+    await refreshData();
+    socket = io();
+    socket.on('newBid', () => refreshData());
+    socket.on('statsUpdate', d => {
+      setText('s-viewers', d.activeConnections);
+    });
+  }
+
+  // ── Fetch data ──
+  async function refreshData() {
+    const [artRes, statRes] = await Promise.all([
+      fetch('/api/admin/bids?pw=' + ADMIN_PW),
+      fetch('/api/stats')
+    ]);
+    allData = await artRes.json();
+    const stats = await statRes.json();
+    updateStats(stats);
+    renderTable(allData);
+  }
+
+  function updateStats(s) {
+    setText('s-raised',  fmt(s.totalRaised));
+    setText('s-bids',    s.totalBids);
+    setText('s-items',   s.itemsWithBids + ' / ' + s.totalItems);
+    setText('s-viewers', s.activeConnections);
+  }
+
+  // ── Render table ──
+  function renderTable(data) {
+    const tbody = document.getElementById('table-body');
+    tbody.innerHTML = '';
+    data.forEach(a => {
+      const top = a.bids[0] || null;
+      const hasBids = a.bids.length > 0;
+
+      // Main row
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="lot">${esc(a.lotNumber)}</td>
+        <td>
+          <div class="item-title">${esc(a.title)}</div>
+          <div class="item-artist">${esc(a.artist)}</div>
+        </td>
+        <td>${fmt(a.startingBid)}</td>
+        <td class="bid-amount">${hasBids ? fmt(a.currentBid) : '<span class="no-bids">No bids</span>'}</td>
+        <td>${top ? `<div class="contact-name">${esc(top.bidderName)}</div>` : '<span class="no-bids">—</span>'}</td>
+        <td>${top ? `
+          <div class="contact-detail">📧 ${esc(top.email)}</div>
+          <div class="contact-detail">📱 ${esc(top.mobile)}</div>
+        ` : '<span class="no-bids">—</span>'}</td>
+        <td>
+          <span class="badge ${hasBids ? 'badge-active' : 'badge-none'}">${a.bids.length} bid${a.bids.length !== 1 ? 's' : ''}</span>
+        </td>
+        <td>${hasBids ? `<button class="expand-btn" onclick="toggleHistory(${a.id})">▼ Show</button>` : '—'}</td>
+      `;
+      tbody.appendChild(tr);
+
+      // History row
+      if (hasBids) {
+        const hr = document.createElement('tr');
+        hr.className = 'history-row';
+        hr.id = `hist-${a.id}`;
+        hr.innerHTML = `
+          <td colspan="8" style="padding:0 14px 14px">
+            <div class="history-inner">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Mobile</th>
+                    <th>Amount</th>
+                    <th>Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${a.bids.map((b, i) => `
+                    <tr>
+                      <td style="color:var(--muted)">${i + 1}</td>
+                      <td style="font-weight:600">${esc(b.bidderName)}</td>
+                      <td style="color:var(--muted)">${esc(b.email || '—')}</td>
+                      <td style="color:var(--muted)">${esc(b.mobile || '—')}</td>
+                      <td style="color:var(--gold-pale);font-weight:700">${fmt(b.amount)}</td>
+                      <td style="color:var(--muted)">${fmtTime(b.timestamp)}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </td>`;
+        tbody.appendChild(hr);
+      }
+    });
+  }
+
+  function toggleHistory(id) {
+    const row = document.getElementById(`hist-${id}`);
+    const btn = row.previousElementSibling.querySelector('.expand-btn');
+    const open = row.classList.toggle('open');
+    btn.textContent = open ? '▲ Hide' : '▼ Show';
+  }
+
+  // ── Export CSV ──
+  function exportCSV() {
+    const rows = [['Lot', 'Title', 'Artist', 'Starting Bid', 'Current Bid', 'First Name', 'Last Name', 'Email', 'Mobile', 'Bid Amount', 'Time']];
+    allData.forEach(a => {
+      if (!a.bids.length) {
+        rows.push([a.lotNumber, a.title, a.artist, a.startingBid, 'No bids', '', '', '', '', '', '']);
+      } else {
+        a.bids.forEach(b => {
+          rows.push([
+            a.lotNumber, a.title, a.artist,
+            a.startingBid, a.currentBid,
+            b.firstName || '', b.lastName || '',
+            b.email || '', b.mobile || '',
+            b.amount, b.timestamp
+          ]);
+        });
+      }
+    });
+    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = 'H4H-Bids.csv'; a.click();
+    URL.revokeObjectURL(url);
+    toast('CSV downloaded!');
+  }
+
+  // ── Toast ──
+  function toast(msg) {
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.innerHTML = `<div><div class="toast-title">${msg}</div></div>`;
+    document.getElementById('toasts').appendChild(el);
+    setTimeout(() => el.remove(), 3000);
+  }
+
+  // ── Helpers ──
+  const fmt = v => '฿' + Number(v).toLocaleString('en-US');
+  function setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
+  function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function fmtTime(iso) {
+    return new Date(iso).toLocaleString('en-GB', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  }
+</script>
+</body>
+</html>
