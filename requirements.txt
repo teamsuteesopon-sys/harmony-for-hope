@@ -2,6 +2,6 @@ flask
 flask-socketio
 gevent
 gevent-websocket
-qrcode
+qrcode[pil]
 Pillow
 gunicorn

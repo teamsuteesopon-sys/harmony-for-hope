@@ -377,7 +377,7 @@ def api_qr(artwork_id):
     )
     qr.add_data(artwork_url)
     qr.make(fit=True)
-    img = qr.make_image(fill_color="#0a0118", back_color="white")
+    img = qr.make_image(fill_color="black", back_color="white")
 
     buf = io.BytesIO()
     img.save(buf, format="PNG")
@@ -401,7 +401,7 @@ def api_qr_home():
     qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_H, box_size=10, border=2)
     qr.add_data(home_url)
     qr.make(fit=True)
-    img = qr.make_image(fill_color="#0a0118", back_color="white")
+    img = qr.make_image(fill_color="black", back_color="white")
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     buf.seek(0)
