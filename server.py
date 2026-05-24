@@ -388,6 +388,37 @@ def api_qr(artwork_id):
     return jsonify({"qr": data_url, "url": artwork_url, "artwork": {"id": artwork_id, "title": a["title"]}})
 
 
+@app.route("/api/bid/cancel", methods=["POST"])
+def api_cancel_bid():
+    data = request.get_json(silent=True) or {}
+    bid_id = data.get("bidId")
+    email  = str(data.get("email") or "").strip().lower()
+
+    if not bid_id or not email:
+        return jsonify({"error": "bidId and email are required"}), 400
+
+    for artwork_id, d in bid_data.items():
+        for i, bid in enumerate(d["bids"]):
+            if bid["id"] == bid_id and bid["email"].lower() == email:
+                d["bids"].pop(i)
+                # Recalculate current bid
+                if d["bids"]:
+                    d["currentBid"] = d["bids"][0]["amount"]
+                else:
+                    d["currentBid"] = artwork_map[artwork_id]["startingBid"]
+                a = artwork_map[artwork_id]
+                socketio.emit("bidCancelled", {
+                    "artworkId":  artwork_id,
+                    "currentBid": d["currentBid"],
+                    "bidCount":   len(d["bids"]),
+                    "bids":       d["bids"][:30],
+                })
+                socketio.emit("statsUpdate", get_stats())
+                return jsonify({"success": True, "currentBid": d["currentBid"]})
+
+    return jsonify({"error": "No matching bid found. Please check your email and bid ID."}), 404
+
+
 @app.route("/api/stats")
 def api_stats():
     return jsonify(get_stats())

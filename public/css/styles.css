@@ -671,6 +671,23 @@ input  { font-family: inherit; }
 .btn-bid:disabled { opacity: 0.5; transform: none; cursor: not-allowed; }
 .bid-form-error { font-size: 13px; color: var(--error); margin-top: 9px; min-height: 18px; }
 
+.cancel-bid-wrap { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px; }
+.cancel-toggle {
+  background: none; border: none; color: var(--text-muted); cursor: pointer;
+  font-family: inherit; font-size: 13px; text-decoration: underline; padding: 0;
+}
+.cancel-toggle:hover { color: var(--text); }
+.cancel-form { margin-top: 14px; }
+.cancel-hint { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
+.btn-cancel-submit {
+  width: 100%; background: transparent; border: 1px solid var(--error);
+  border-radius: 8px; color: var(--error); cursor: pointer; font-family: inherit;
+  font-size: 14px; font-weight: 600; padding: 11px; transition: all .2s;
+}
+.btn-cancel-submit:hover { background: rgba(239,68,68,.1); }
+.cancel-error { font-size: 13px; color: var(--error); margin-top: 8px; }
+.cancel-success { font-size: 13px; color: var(--success); margin-top: 8px; }
+
 /* ── Bottom: history + QR ── */
 .artwork-bottom { display: grid; grid-template-columns: 1fr 330px; gap: 28px; align-items: start; }
 .bid-history-card, .qr-card {

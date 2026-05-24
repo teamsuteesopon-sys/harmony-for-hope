@@ -203,7 +203,12 @@ async function handleBid(e) {
       errorEl.textContent = data.error || 'Failed to place bid.';
     } else {
       document.getElementById('bid-amount').value = '';
-      showToast('success', 'Bid placed!', `Your bid of ${fmt(data.currentBid)} was accepted.`);
+      const bidId = data.bid.id;
+      // Pre-fill cancel form for convenience
+      document.getElementById('cancel-email').value = email;
+      document.getElementById('cancel-bid-id').value = bidId;
+      showToast('success', 'Bid placed!',
+        `Your bid of ${fmt(data.currentBid)} was accepted. Bid ID: ${bidId}`);
     }
   } catch {
     errorEl.textContent = 'Network error. Please try again.';
@@ -212,6 +217,46 @@ async function handleBid(e) {
     btn.textContent = 'Place Bid';
   }
 }
+
+// ── Cancel bid ──
+window.toggleCancel = function() {
+  const form = document.getElementById('cancel-form');
+  const btn  = document.getElementById('cancel-toggle');
+  const open = form.style.display === 'none';
+  form.style.display = open ? 'block' : 'none';
+  btn.textContent = open ? 'Hide' : 'Cancel a previous bid';
+};
+
+window.cancelBid = async function() {
+  const email  = document.getElementById('cancel-email').value.trim();
+  const bidId  = document.getElementById('cancel-bid-id').value.trim();
+  const errEl  = document.getElementById('cancel-error');
+  const succEl = document.getElementById('cancel-success');
+  errEl.textContent = '';
+  succEl.style.display = 'none';
+
+  if (!email || !bidId) { errEl.textContent = 'Please enter your email and Bid ID.'; return; }
+
+  try {
+    const res  = await fetch('/api/bid/cancel', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bidId: parseInt(bidId) || bidId, email })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      errEl.textContent = data.error || 'Could not cancel bid.';
+    } else {
+      document.getElementById('cancel-email').value  = '';
+      document.getElementById('cancel-bid-id').value = '';
+      succEl.textContent = 'Your bid has been successfully cancelled.';
+      succEl.style.display = 'block';
+      showToast('success', 'Bid cancelled', 'Your bid has been removed.');
+    }
+  } catch {
+    errEl.textContent = 'Network error. Please try again.';
+  }
+};
 
 // ── Load QR code ──
 async function loadQR() {
@@ -248,6 +293,13 @@ socket.on('newBid', ({ artworkId: id, currentBid: amount, bid }) => {
   updateBidDisplay(amount, prevCount + 1, bid.bidderName);
   prependBidHistory(bid);
   showToast('bid', 'New bid placed!', `${bid.bidderName} — ${fmt(amount)}`);
+});
+
+socket.on('bidCancelled', ({ artworkId: id, currentBid: amount, bidCount, bids }) => {
+  if (id !== artworkId) return;
+  const topBidder = bids && bids[0] ? bids[0].bidderName : null;
+  updateBidDisplay(amount, bidCount, topBidder);
+  renderBidHistory(bids || []);
 });
 
 // ── Toast ──
