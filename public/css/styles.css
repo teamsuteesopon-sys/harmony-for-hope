@@ -620,7 +620,8 @@ input  { font-family: inherit; }
   background: linear-gradient(135deg, #fff, var(--gold-pale));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
-.artwork-desc { font-size: 15px; color: var(--text-muted); line-height: 1.75; margin-bottom: 26px; }
+.artwork-desc { font-size: 15px; color: var(--text-muted); line-height: 1.75; margin-bottom: 12px; }
+.artwork-estimated-value { font-size: 13px; font-weight: 600; color: var(--gold); margin-bottom: 26px; }
 
 .bid-display {
   background: linear-gradient(135deg, rgba(212,168,48,0.08), rgba(100,70,0,0.12));

@@ -18,7 +18,7 @@ ARTWORKS = [
         "artist": "Grade 6 Collaborative ('24–'25) with Popkapi",
         "medium": "Mixed Media on Canvas", "size": "180cm × 180cm",
         "category": "Painting", "image": "images/01-elephant.jpg",
-        "startingBid": 25000, "minIncrement": 500,
+        "startingBid": 25000, "minIncrement": 500, "estimatedValue": 90000,
         "description": "A vibrant and powerful testament to the creative synergy between 6th-grade students and visiting Thai artist Jakkrit Chewapanya, known as 'Popkapi'. The canvas is dominated by the monumental presence of an elephant — a figure chosen for its deep, sacred connection to Thai culture — rendered in an uncontainable burst of neon colour and layered textures within a chaotic, urban-inspired dreamscape.",
     },
     {
@@ -27,7 +27,7 @@ ARTWORKS = [
         "artist": "Grade 6 Collaborative ('24–'25) with Popkapi",
         "medium": "Mixed Media on Canvas", "size": "180cm × 180cm",
         "category": "Painting", "image": "images/02-llama.jpg",
-        "startingBid": 25000, "minIncrement": 500,
+        "startingBid": 25000, "minIncrement": 500, "estimatedValue": 90000,
         "description": "Bursting with neon hues and a cast of imaginative, graffiti-inspired figures, this collaborative piece serves as a vivid record of a creative experiment. Guided by visiting Thai artist Jakkrit Chewapanya, the 6th-grade students transformed their classroom into a studio, trading brushes for spray cans and markers to engage in a high-energy visual dialogue.",
     },
     {
@@ -203,7 +203,7 @@ ARTWORKS = [
     },
     {
         "id": 22, "lotNumber": "21",
-        "title": "Chesa Swiss Cuisine Voucher",
+        "title": "Chesa Swiss Restaurant Voucher",
         "artist": "Chesa Swiss Cuisine",
         "medium": "Voucher", "size": "Dinner · Value: ฿9,000",
         "category": "Voucher", "image": "images/21-chesa.jpg",

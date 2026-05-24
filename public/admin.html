@@ -201,7 +201,7 @@
       <table id="main-table">
         <thead>
           <tr>
-            <th>Lot</th>
+            <th>Item</th>
             <th>Item</th>
             <th>Starting Bid</th>
             <th>Current Bid</th>
@@ -280,7 +280,7 @@
       // Main row
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td class="lot">${esc(a.lotNumber)}</td>
+        <td class="lot">Item ${esc(a.lotNumber)}</td>
         <td>
           <div class="item-title">${esc(a.title)}</div>
           <div class="item-artist">${esc(a.artist)}</div>

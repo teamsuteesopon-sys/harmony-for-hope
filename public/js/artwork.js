@@ -36,10 +36,19 @@ function renderArtwork(a) {
   loadArtworkPhoto(a);
 
   // Info
-  setText('artwork-number', `Lot ${a.lotNumber}`);
+  setText('artwork-number', `Item ${a.lotNumber}`);
   setText('artwork-artist', a.artist);
   setText('artwork-title',  a.title);
   setText('artwork-desc',   a.description);
+  const estEl = document.getElementById('artwork-estimated-value');
+  if (estEl) {
+    if (a.estimatedValue) {
+      estEl.textContent = `Estimated Value: ${fmt(a.estimatedValue)}`;
+      estEl.style.display = 'block';
+    } else {
+      estEl.style.display = 'none';
+    }
+  }
   setText('meta-category',  a.category);
   setText('meta-medium',    a.medium);
   setText('meta-size',      a.size);

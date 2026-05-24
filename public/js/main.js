@@ -36,7 +36,7 @@ function renderGrid(list) {
           loading="lazy"
           style="width:100%;height:100%;object-fit:cover;display:block;"
         >
-        <span class="card-num">Lot ${a.lotNumber}</span>
+        <span class="card-num">Item ${a.lotNumber}</span>
         <span class="card-category">${a.category}</span>
         <div class="card-bid-overlay">
           <div class="card-bid-label">${a.bidCount > 0 ? 'Current Bid' : 'Starting Bid'}</div>
