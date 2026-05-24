@@ -8,7 +8,7 @@ from flask import Flask, jsonify, request, send_from_directory
 from flask_socketio import SocketIO, emit
 
 app = Flask(__name__, static_folder="public", static_url_path="")
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode="gevent")
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
 
 # ── Artwork catalogue ──────────────────────────────────────────────────────────
 ARTWORKS = [

@@ -1,7 +1,6 @@
 flask
 flask-socketio
-gevent
-gevent-websocket
+eventlet
 qrcode[pil]
 Pillow
 gunicorn
