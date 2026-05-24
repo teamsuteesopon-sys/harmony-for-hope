@@ -426,7 +426,8 @@ def on_disconnect():
 
 # ── Entry point ────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    port = 3000
+    import os
+    port = int(os.environ.get("PORT", 3000))
     print(f"\n  🎨  Harmony for Hope — Live Auction Server · ISB")
     print(f"  🌐  http://localhost:{port}")
     print(f"  ✨  Ready for bidding!\n")
