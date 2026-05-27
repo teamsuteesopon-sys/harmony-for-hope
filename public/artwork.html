@@ -112,14 +112,10 @@
             <div class="cancel-bid-wrap">
               <button class="cancel-toggle" id="cancel-toggle" onclick="toggleCancel()">Cancel a previous bid</button>
               <div class="cancel-form" id="cancel-form" style="display:none">
-                <p class="cancel-hint">Enter the email address you used when bidding and your Bid ID to cancel your bid.</p>
+                <p class="cancel-hint">Enter the email address you used when placing your bid. Your most recent bid on this item will be cancelled.</p>
                 <div class="form-group">
                   <label class="form-label" for="cancel-email">Email Address</label>
                   <input class="form-input" id="cancel-email" type="email" placeholder="your@email.com">
-                </div>
-                <div class="form-group">
-                  <label class="form-label" for="cancel-bid-id">Bid ID</label>
-                  <input class="form-input" id="cancel-bid-id" type="text" placeholder="Paste your Bid ID here">
                 </div>
                 <button class="btn-cancel-submit" onclick="cancelBid()">Cancel My Bid</button>
                 <p class="cancel-error" id="cancel-error"></p>

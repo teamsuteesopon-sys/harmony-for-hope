@@ -247,26 +247,24 @@ window.toggleCancel = function() {
 
 window.cancelBid = async function() {
   const email  = document.getElementById('cancel-email').value.trim();
-  const bidId  = document.getElementById('cancel-bid-id').value.trim();
   const errEl  = document.getElementById('cancel-error');
   const succEl = document.getElementById('cancel-success');
   errEl.textContent = '';
   succEl.style.display = 'none';
 
-  if (!email || !bidId) { errEl.textContent = 'Please enter your email and Bid ID.'; return; }
+  if (!email) { errEl.textContent = 'Please enter your email address.'; return; }
 
   try {
     const res  = await fetch('/api/bid/cancel', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ bidId: parseInt(bidId) || bidId, email })
+      body: JSON.stringify({ artworkId, email })
     });
     const data = await res.json();
     if (!res.ok) {
       errEl.textContent = data.error || 'Could not cancel bid.';
     } else {
-      document.getElementById('cancel-email').value  = '';
-      document.getElementById('cancel-bid-id').value = '';
+      document.getElementById('cancel-email').value = '';
       succEl.textContent = 'Your bid has been successfully cancelled.';
       succEl.style.display = 'block';
       showToast('success', 'Bid cancelled', 'Your bid has been removed.');
