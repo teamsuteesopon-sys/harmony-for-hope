@@ -243,7 +243,15 @@ ARTWORKS = [
 ]
 
 # ── Database setup ─────────────────────────────────────────────────────────────
-DB_PATH = os.environ.get("DB_PATH", "bids.db")
+_db_path = os.environ.get("DB_PATH", "bids.db")
+# Make sure the directory exists
+_db_dir = os.path.dirname(_db_path)
+if _db_dir and not os.path.exists(_db_dir):
+    try:
+        os.makedirs(_db_dir, exist_ok=True)
+    except Exception:
+        _db_path = "bids.db"  # fallback to local file
+DB_PATH = _db_path
 
 def db_connect():
     conn = sqlite3.connect(DB_PATH)
