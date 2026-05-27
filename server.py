@@ -473,25 +473,28 @@ def api_qr(artwork_id):
 def api_cancel_bid():
     data       = request.get_json(silent=True) or {}
     artwork_id = data.get("artworkId")
+    bid_id     = data.get("bidId")
     email      = str(data.get("email") or "").strip().lower()
 
-    if not artwork_id or not email:
-        return jsonify({"error": "artworkId and email are required"}), 400
+    if not artwork_id or not bid_id or not email:
+        return jsonify({"error": "artworkId, bidId and email are required"}), 400
 
     try:
         artwork_id = int(artwork_id)
+        bid_id     = int(bid_id)
     except (ValueError, TypeError):
-        return jsonify({"error": "Invalid artworkId"}), 400
+        return jsonify({"error": "Invalid artworkId or bidId"}), 400
 
     d = bid_data.get(artwork_id)
     if not d:
         return jsonify({"error": "Artwork not found"}), 404
 
-    # Find the most recent bid by this email
     for i, bid in enumerate(d["bids"]):
-        if bid["email"].lower() == email:
+        if bid["id"] == bid_id:
+            if bid["email"].lower() != email:
+                return jsonify({"error": "Email does not match this bid."}), 403
             d["bids"].pop(i)
-            delete_bid(bid["id"])
+            delete_bid(bid_id)
             if d["bids"]:
                 d["currentBid"] = d["bids"][0]["amount"]
             else:
@@ -505,7 +508,7 @@ def api_cancel_bid():
             socketio.emit("statsUpdate", get_stats())
             return jsonify({"success": True, "currentBid": d["currentBid"]})
 
-    return jsonify({"error": "No bid found for that email on this item."}), 404
+    return jsonify({"error": "Bid ID not found for this item."}), 404
 
 
 @app.route("/api/stats")

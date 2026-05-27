@@ -215,6 +215,7 @@ async function handleBid(e) {
       const bidId = data.bid.id;
       // Pre-fill cancel form for convenience
       document.getElementById('cancel-email').value = email;
+      document.getElementById('cancel-bid-id').value = bidId;
       // Show Bid ID persistently on screen
       const confirmEl = document.getElementById('bid-confirmation');
       if (confirmEl) {
@@ -245,19 +246,21 @@ window.toggleCancel = function() {
 };
 
 window.cancelBid = async function() {
+  const bidId  = document.getElementById('cancel-bid-id').value.trim();
   const email  = document.getElementById('cancel-email').value.trim();
   const errEl  = document.getElementById('cancel-error');
   const succEl = document.getElementById('cancel-success');
   errEl.textContent = '';
   succEl.style.display = 'none';
 
-  if (!email) { errEl.textContent = 'Please enter your email address.'; return; }
+  if (!bidId)  { errEl.textContent = 'Please enter your Bid ID.'; return; }
+  if (!email)  { errEl.textContent = 'Please enter your email address.'; return; }
 
   try {
     const res  = await fetch('/api/bid/cancel', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ artworkId, email })
+      body: JSON.stringify({ artworkId, bidId: parseInt(bidId), email })
     });
     const data = await res.json();
     if (!res.ok) {
