@@ -3,11 +3,8 @@ services:
     name: harmony-for-hope-1
     runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:$PORT server:app
+    startCommand: python server.py
     plan: starter
-    envVars:
-      - key: DB_PATH
-        value: /data/bids.db
     disk:
       name: auction-data
       mountPath: /data
