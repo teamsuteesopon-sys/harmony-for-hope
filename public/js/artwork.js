@@ -215,7 +215,6 @@ async function handleBid(e) {
       const bidId = data.bid.id;
       // Pre-fill cancel form for convenience
       document.getElementById('cancel-email').value = email;
-      document.getElementById('cancel-bid-id').value = bidId;
       // Show Bid ID persistently on screen
       const confirmEl = document.getElementById('bid-confirmation');
       if (confirmEl) {
