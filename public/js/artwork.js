@@ -216,8 +216,17 @@ async function handleBid(e) {
       // Pre-fill cancel form for convenience
       document.getElementById('cancel-email').value = email;
       document.getElementById('cancel-bid-id').value = bidId;
-      showToast('success', 'Bid placed!',
-        `Your bid of ${fmt(data.currentBid)} was accepted. Bid ID: ${bidId}`);
+      // Show Bid ID persistently on screen
+      const confirmEl = document.getElementById('bid-confirmation');
+      if (confirmEl) {
+        confirmEl.style.display = 'block';
+        confirmEl.innerHTML = `
+          <p class="bid-confirm-title">✅ Bid placed successfully!</p>
+          <p class="bid-confirm-text">Your bid of <strong>${fmt(data.currentBid)}</strong> has been accepted.</p>
+          <p class="bid-confirm-text">Your Bid ID: <strong class="bid-confirm-id">${bidId}</strong></p>
+          <p class="bid-confirm-hint">Save this ID if you wish to cancel your bid later.</p>
+        `;
+      }
     }
   } catch {
     errorEl.textContent = 'Network error. Please try again.';

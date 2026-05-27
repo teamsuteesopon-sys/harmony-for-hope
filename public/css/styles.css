@@ -672,6 +672,15 @@ input  { font-family: inherit; }
 .btn-bid:disabled { opacity: 0.5; transform: none; cursor: not-allowed; }
 .bid-form-error { font-size: 13px; color: var(--error); margin-top: 9px; min-height: 18px; }
 
+.bid-confirmation {
+  margin-top: 16px; padding: 16px; border-radius: 10px;
+  background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.3);
+}
+.bid-confirm-title { font-weight: 700; font-size: 14px; color: var(--success); margin-bottom: 8px; }
+.bid-confirm-text  { font-size: 13px; color: var(--text); margin-bottom: 4px; }
+.bid-confirm-id    { color: var(--gold); font-family: monospace; font-size: 15px; letter-spacing: 1px; }
+.bid-confirm-hint  { font-size: 11px; color: var(--text-muted); margin-top: 8px; }
+
 .cancel-bid-wrap { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px; }
 .cancel-toggle {
   background: none; border: none; color: var(--text-muted); cursor: pointer;
