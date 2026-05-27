@@ -316,6 +316,7 @@
                     <th>Mobile</th>
                     <th>Amount</th>
                     <th>Time</th>
+                    <th>Bid ID</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -327,6 +328,7 @@
                       <td style="color:var(--muted)">${esc(b.mobile || '—')}</td>
                       <td style="color:var(--gold-pale);font-weight:700">${fmt(b.amount)}</td>
                       <td style="color:var(--muted)">${fmtTime(b.timestamp)}</td>
+                      <td style="color:var(--gold);font-family:monospace;font-size:11px">${b.id}</td>
                     </tr>
                   `).join('')}
                 </tbody>
