@@ -533,6 +533,45 @@ def api_admin_bids():
     return jsonify(result)
 
 
+@app.route("/api/admin/bid/remove", methods=["POST"])
+def api_admin_remove_bid():
+    data = request.get_json(silent=True) or {}
+    if data.get("pw") != ADMIN_PASSWORD:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    bid_id     = data.get("bidId")
+    artwork_id = data.get("artworkId")
+
+    try:
+        bid_id     = int(bid_id)
+        artwork_id = int(artwork_id)
+    except (ValueError, TypeError):
+        return jsonify({"error": "Invalid bidId or artworkId"}), 400
+
+    d = bid_data.get(artwork_id)
+    if not d:
+        return jsonify({"error": "Artwork not found"}), 404
+
+    for i, bid in enumerate(d["bids"]):
+        if bid["id"] == bid_id:
+            d["bids"].pop(i)
+            delete_bid(bid_id)
+            if d["bids"]:
+                d["currentBid"] = d["bids"][0]["amount"]
+            else:
+                d["currentBid"] = artwork_map[artwork_id]["startingBid"]
+            socketio.emit("bidCancelled", {
+                "artworkId":  artwork_id,
+                "currentBid": d["currentBid"],
+                "bidCount":   len(d["bids"]),
+                "bids":       d["bids"][:30],
+            })
+            socketio.emit("statsUpdate", get_stats())
+            return jsonify({"success": True, "currentBid": d["currentBid"]})
+
+    return jsonify({"error": "Bid not found"}), 404
+
+
 @app.route("/admin")
 def admin_page():
     return send_from_directory("public", "admin.html")

@@ -117,6 +117,12 @@
       color: var(--muted); cursor: pointer; font-size: 11px; padding: 4px 10px;
     }
     .expand-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .remove-btn {
+      background: transparent; border: 1px solid rgba(239,68,68,.4); border-radius: 6px;
+      color: #ef4444; cursor: pointer; font-size: 11px; font-family: inherit;
+      padding: 4px 10px; transition: background .15s, color .15s;
+    }
+    .remove-btn:hover { background: rgba(239,68,68,.15); }
 
     /* ── Bid history rows ── */
     .history-row { display: none; }
@@ -317,6 +323,7 @@
                     <th>Amount</th>
                     <th>Time</th>
                     <th>Bid ID</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -329,6 +336,7 @@
                       <td style="color:var(--gold-pale);font-weight:700">${fmt(b.amount)}</td>
                       <td style="color:var(--muted)">${fmtTime(b.timestamp)}</td>
                       <td style="color:var(--gold);font-family:monospace;font-size:11px">${b.id}</td>
+                      <td><button class="remove-btn" onclick="removeBid(${a.id}, ${b.id}, '${esc(b.bidderName)}')">✕ Remove</button></td>
                     </tr>
                   `).join('')}
                 </tbody>
@@ -372,6 +380,27 @@
     a.href = url; a.download = 'H4H-Bids.csv'; a.click();
     URL.revokeObjectURL(url);
     toast('CSV downloaded!');
+  }
+
+  // ── Remove bid (admin) ──
+  async function removeBid(artworkId, bidId, name) {
+    if (!confirm(`Remove bid from ${name}? This cannot be undone.`)) return;
+    try {
+      const res = await fetch('/api/admin/bid/remove', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pw: ADMIN_PW, artworkId, bidId })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast('Error: ' + (data.error || 'Could not remove bid.'));
+      } else {
+        toast(`Removed bid from ${name}`);
+        await refreshData();
+      }
+    } catch {
+      toast('Network error. Please try again.');
+    }
   }
 
   // ── Toast ──
