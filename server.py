@@ -3,6 +3,9 @@
 
 import base64
 import io
+import json
+import os
+import sqlite3
 import qrcode
 from flask import Flask, jsonify, request, send_from_directory
 from flask_socketio import SocketIO, emit
@@ -239,9 +242,78 @@ ARTWORKS = [
     },
 ]
 
-# ── In-memory state ────────────────────────────────────────────────────────────
+# ── Database setup ─────────────────────────────────────────────────────────────
+DB_PATH = os.environ.get("DB_PATH", "bids.db")
+
+def db_connect():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def init_db():
+    with db_connect() as conn:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS bids (
+                id          INTEGER PRIMARY KEY,
+                artwork_id  INTEGER NOT NULL,
+                amount      REAL NOT NULL,
+                bidder_name TEXT NOT NULL,
+                first_name  TEXT,
+                last_name   TEXT,
+                mobile      TEXT,
+                email       TEXT,
+                timestamp   TEXT NOT NULL
+            )
+        """)
+        conn.commit()
+
+init_db()
+
+def load_bid_data():
+    """Load all bids from DB into memory."""
+    data = {a["id"]: {"currentBid": a["startingBid"], "bids": []} for a in ARTWORKS}
+    with db_connect() as conn:
+        rows = conn.execute("SELECT * FROM bids ORDER BY amount DESC").fetchall()
+    for row in rows:
+        aid = row["artwork_id"]
+        if aid not in data:
+            continue
+        bid = {
+            "id":          row["id"],
+            "amount":      row["amount"],
+            "bidderName":  row["bidder_name"],
+            "firstName":   row["first_name"] or "",
+            "lastName":    row["last_name"] or "",
+            "mobile":      row["mobile"] or "",
+            "email":       row["email"] or "",
+            "timestamp":   row["timestamp"],
+        }
+        data[aid]["bids"].append(bid)
+        if row["amount"] > data[aid]["currentBid"]:
+            data[aid]["currentBid"] = row["amount"]
+    # Sort bids per artwork highest first
+    for aid in data:
+        data[aid]["bids"].sort(key=lambda b: b["amount"], reverse=True)
+    return data
+
+def save_bid(artwork_id, bid):
+    with db_connect() as conn:
+        conn.execute("""
+            INSERT INTO bids (id, artwork_id, amount, bidder_name, first_name, last_name, mobile, email, timestamp)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (bid["id"], artwork_id, bid["amount"], bid["bidderName"],
+              bid.get("firstName",""), bid.get("lastName",""),
+              bid.get("mobile",""), bid.get("email",""), bid["timestamp"]))
+        conn.commit()
+
+def delete_bid(bid_id):
+    with db_connect() as conn:
+        conn.execute("DELETE FROM bids WHERE id = ?", (bid_id,))
+        conn.commit()
+
+# ── In-memory state (loaded from DB on startup) ────────────────────────────────
 artwork_map = {a["id"]: a for a in ARTWORKS}
-bid_data = {a["id"]: {"currentBid": a["startingBid"], "bids": []} for a in ARTWORKS}
+bid_data    = load_bid_data()
 active_connections = 0
 
 
@@ -346,6 +418,7 @@ def api_bid():
     }
     d["currentBid"] = amount
     d["bids"].insert(0, bid)
+    save_bid(artwork_id, bid)
 
     # Broadcast to all connected clients
     socketio.emit("newBid", {
@@ -401,6 +474,7 @@ def api_cancel_bid():
         for i, bid in enumerate(d["bids"]):
             if bid["id"] == bid_id and bid["email"].lower() == email:
                 d["bids"].pop(i)
+                delete_bid(bid_id)
                 # Recalculate current bid
                 if d["bids"]:
                     d["currentBid"] = d["bids"][0]["amount"]
