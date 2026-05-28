@@ -420,7 +420,8 @@ def api_bid():
         return jsonify({"error": "Artwork not found"}), 404
 
     d = bid_data[artwork_id]
-    min_bid = d["currentBid"] + a["minIncrement"]
+    # First bid can match the starting bid; subsequent bids must exceed current by minIncrement
+    min_bid = a["startingBid"] if not d["bids"] else d["currentBid"] + a["minIncrement"]
 
     if amount < min_bid:
         return jsonify({"error": f"Minimum bid is ฿{min_bid:,.0f}", "minBid": min_bid}), 400

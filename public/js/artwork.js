@@ -6,6 +6,7 @@ const artworkId = parseInt(params.get('id'));
 let artwork = null;
 let currentBid = 0;
 let minIncrement = 0;
+let bidCount = 0;
 
 if (!artworkId || isNaN(artworkId)) {
   document.getElementById('artwork-loading').innerHTML =
@@ -54,6 +55,7 @@ function renderArtwork(a) {
   setText('meta-size',      a.size);
 
   // Bid display
+  bidCount = a.bids.length;
   updateBidDisplay(a.currentBid, a.bids.length, a.bids[0] ? initials(a.bids[0].bidderName) : null);
 
   // Bid history
@@ -86,6 +88,7 @@ function loadArtworkPhoto(a) {
 // ── Bid display ──
 function updateBidDisplay(amount, count, lastBidder) {
   currentBid = amount;
+  bidCount = count;
   const bidEl = document.getElementById('current-bid');
   if (bidEl) {
     bidEl.textContent = fmt(amount);
@@ -105,7 +108,7 @@ function updateBidDisplay(amount, count, lastBidder) {
 
 function updateMinHint() {
   if (!artwork) return;
-  const min = currentBid + minIncrement;
+  const min = bidCount === 0 ? currentBid : currentBid + minIncrement;
   setText('bid-minimum-hint', `Minimum bid: ${fmt(min)} (increment: +${fmt(minIncrement)})`);
   const amountInput = document.getElementById('bid-amount');
   if (amountInput) amountInput.min = min;
@@ -113,7 +116,7 @@ function updateMinHint() {
 
 function renderQuickBids() {
   if (!artwork) return;
-  const min = currentBid + minIncrement;
+  const min = bidCount === 0 ? currentBid : currentBid + minIncrement;
   const steps = [min, min + minIncrement, min + minIncrement*2, min + minIncrement*5];
   const container = document.getElementById('quick-bids');
   container.innerHTML = steps.map(v => `
