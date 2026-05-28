@@ -183,12 +183,15 @@ async function handleBid(e) {
   const mobile    = document.getElementById('bidder-mobile').value.trim();
   const email     = document.getElementById('bidder-email').value.trim();
   const amount    = parseFloat(document.getElementById('bid-amount').value);
+  const attendingEl = document.querySelector('input[name="attending"]:checked');
 
   errorEl.textContent = '';
   if (!firstName || !lastName) { errorEl.textContent = 'Please enter your first and last name.'; return; }
   if (!mobile)  { errorEl.textContent = 'Please enter your mobile number.'; return; }
   if (!email || !email.includes('@')) { errorEl.textContent = 'Please enter a valid email address.'; return; }
   if (!amount || isNaN(amount)) { errorEl.textContent = 'Please enter a bid amount.'; return; }
+  if (!attendingEl) { errorEl.textContent = 'Please select whether you are attending the concert.'; return; }
+  const attending = attendingEl.value;
 
   btn.disabled = true;
   btn.textContent = 'Placing bid…';
@@ -204,7 +207,8 @@ async function handleBid(e) {
         firstName,
         lastName,
         mobile,
-        email
+        email,
+        attending
       })
     });
     const data = await res.json();

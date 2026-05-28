@@ -321,6 +321,7 @@
                     <th>Email</th>
                     <th>Mobile</th>
                     <th>Amount</th>
+                    <th>Attending</th>
                     <th>Time</th>
                     <th>Bid ID</th>
                     <th>Action</th>
@@ -334,6 +335,7 @@
                       <td style="color:var(--muted)">${esc(b.email || '—')}</td>
                       <td style="color:var(--muted)">${esc(b.mobile || '—')}</td>
                       <td style="color:var(--gold-pale);font-weight:700">${fmt(b.amount)}</td>
+                      <td style="text-align:center">${b.attending === 'yes' ? '✅ Yes' : b.attending === 'no' ? '❌ No' : '<span style="color:var(--muted)">—</span>'}</td>
                       <td style="color:var(--muted)">${fmtTime(b.timestamp)}</td>
                       <td style="color:var(--gold);font-family:monospace;font-size:11px">${b.id}</td>
                       <td><button class="remove-btn" onclick="removeBid(${a.id}, ${b.id}, '${esc(b.bidderName)}')">✕ Remove</button></td>
@@ -357,7 +359,7 @@
 
   // ── Export CSV ──
   function exportCSV() {
-    const rows = [['Lot', 'Title', 'Artist', 'Starting Bid', 'Current Bid', 'First Name', 'Last Name', 'Email', 'Mobile', 'Bid Amount', 'Time']];
+    const rows = [['Lot', 'Title', 'Artist', 'Starting Bid', 'Current Bid', 'First Name', 'Last Name', 'Email', 'Mobile', 'Attending Concert', 'Bid Amount', 'Time']];
     allData.forEach(a => {
       if (!a.bids.length) {
         rows.push([a.lotNumber, a.title, a.artist, a.startingBid, 'No bids', '', '', '', '', '', '']);
@@ -368,6 +370,7 @@
             a.startingBid, a.currentBid,
             b.firstName || '', b.lastName || '',
             b.email || '', b.mobile || '',
+            b.attending === 'yes' ? 'Yes' : b.attending === 'no' ? 'No' : '',
             b.amount, b.timestamp
           ]);
         });

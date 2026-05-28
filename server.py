@@ -270,9 +270,15 @@ def init_db():
                 last_name   TEXT,
                 mobile      TEXT,
                 email       TEXT,
-                timestamp   TEXT NOT NULL
+                timestamp   TEXT NOT NULL,
+                attending   TEXT
             )
         """)
+        # Migrate existing DBs that don't have the attending column yet
+        try:
+            conn.execute("ALTER TABLE bids ADD COLUMN attending TEXT")
+        except Exception:
+            pass
         conn.commit()
 
 init_db()
@@ -294,6 +300,7 @@ def load_bid_data():
             "lastName":    row["last_name"] or "",
             "mobile":      row["mobile"] or "",
             "email":       row["email"] or "",
+            "attending":   row["attending"] or "",
             "timestamp":   row["timestamp"],
         }
         data[aid]["bids"].append(bid)
@@ -307,11 +314,12 @@ def load_bid_data():
 def save_bid(artwork_id, bid):
     with db_connect() as conn:
         conn.execute("""
-            INSERT INTO bids (id, artwork_id, amount, bidder_name, first_name, last_name, mobile, email, timestamp)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO bids (id, artwork_id, amount, bidder_name, first_name, last_name, mobile, email, timestamp, attending)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (bid["id"], artwork_id, bid["amount"], bid["bidderName"],
               bid.get("firstName",""), bid.get("lastName",""),
-              bid.get("mobile",""), bid.get("email",""), bid["timestamp"]))
+              bid.get("mobile",""), bid.get("email",""), bid["timestamp"],
+              bid.get("attending","")))
         conn.commit()
 
 def delete_bid(bid_id):
@@ -385,6 +393,9 @@ def api_bid():
     last_name   = str(data.get("lastName")   or "").strip()[:50].replace("<","").replace(">","")
     mobile      = str(data.get("mobile")     or "").strip()[:30].replace("<","").replace(">","")
     email       = str(data.get("email")      or "").strip()[:100].replace("<","").replace(">","")
+    attending   = str(data.get("attending")  or "").strip().lower()
+    if attending not in ("yes", "no"):
+        attending = ""
     bidder_name = f"{first_name} {last_name}".strip() or "Anonymous"
 
     if artwork_id is None or amount is None:
@@ -395,6 +406,8 @@ def api_bid():
         return jsonify({"error": "Mobile number is required"}), 400
     if not email or "@" not in email:
         return jsonify({"error": "A valid email address is required"}), 400
+    if not attending:
+        return jsonify({"error": "Please select whether you are attending the concert"}), 400
 
     try:
         artwork_id = int(artwork_id)
@@ -422,6 +435,7 @@ def api_bid():
         "lastName":    last_name,
         "mobile":      mobile,
         "email":       email,
+        "attending":   attending,
         "timestamp":   datetime.now(timezone.utc).isoformat(),
     }
     d["currentBid"] = amount
