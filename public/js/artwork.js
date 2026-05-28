@@ -96,6 +96,7 @@ function updateBidDisplay(amount, count, lastBidder) {
     void bidEl.offsetWidth; // force reflow
     bidEl.classList.add('updated');
   }
+  setText('bid-label', count === 0 ? 'Starting Bid' : 'Current Bid');
   setText('bid-count', `${count} ${count === 1 ? 'bid' : 'bids'}`);
   const lastWrap = document.getElementById('last-bidder-wrap');
   if (lastBidder && lastWrap) {
