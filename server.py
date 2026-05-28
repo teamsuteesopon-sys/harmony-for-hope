@@ -48,7 +48,7 @@ ARTWORKS = [
         "artist": "ISB Second Grade Students ('25–'26)",
         "medium": "Textile", "size": "3D Textile Sculpture (1m diameter)",
         "category": "Sculpture", "image": "images/04-illumination-grade2.jpg",
-        "startingBid": 2000, "minIncrement": 100,
+        "startingBid": 2500, "minIncrement": 100,
         "description": "Created by a team of creative 2nd graders, this piece tells the story of many hands working together to make something joyful and unique. What started as small pieces came together into one big, lively creation — almost like a magical, floating creature. Every ribbon and thread represents a student's contribution.",
     },
     {
