@@ -54,7 +54,7 @@ function renderArtwork(a) {
   setText('meta-size',      a.size);
 
   // Bid display
-  updateBidDisplay(a.currentBid, a.bids.length, a.bids[0]?.bidderName || null);
+  updateBidDisplay(a.currentBid, a.bids.length, a.bids[0] ? initials(a.bids[0].bidderName) : null);
 
   // Bid history
   renderBidHistory(a.bids);
@@ -137,7 +137,7 @@ function renderBidHistory(bids) {
     <div class="history-item">
       <div class="history-rank ${i === 0 ? 'top' : ''}">${i === 0 ? '★' : i + 1}</div>
       <div class="history-info">
-        <div class="history-name">${escHtml(b.bidderName)}</div>
+        <div class="history-name">${escHtml(initials(b.bidderName))}</div>
         <div class="history-time">${formatTime(b.timestamp)}</div>
       </div>
       <div class="history-amount">${fmt(b.amount)}</div>
@@ -164,7 +164,7 @@ function prependBidHistory(bid) {
   item.innerHTML = `
     <div class="history-rank top">★</div>
     <div class="history-info">
-      <div class="history-name">${escHtml(bid.bidderName)}</div>
+      <div class="history-name">${escHtml(initials(bid.bidderName))}</div>
       <div class="history-time">${formatTime(bid.timestamp)}</div>
     </div>
     <div class="history-amount">${fmt(bid.amount)}</div>
@@ -312,14 +312,14 @@ window.printQR = function() { window.print(); };
 socket.on('newBid', ({ artworkId: id, currentBid: amount, bid }) => {
   if (id !== artworkId) return;
   const prevCount = parseInt(document.getElementById('bid-count').textContent) || 0;
-  updateBidDisplay(amount, prevCount + 1, bid.bidderName);
+  updateBidDisplay(amount, prevCount + 1, initials(bid.bidderName));
   prependBidHistory(bid);
-  showToast('bid', 'New bid placed!', `${bid.bidderName} — ${fmt(amount)}`);
+  showToast('bid', 'New bid placed!', `${initials(bid.bidderName)} — ${fmt(amount)}`);
 });
 
 socket.on('bidCancelled', ({ artworkId: id, currentBid: amount, bidCount, bids }) => {
   if (id !== artworkId) return;
-  const topBidder = bids && bids[0] ? bids[0].bidderName : null;
+  const topBidder = bids && bids[0] ? initials(bids[0].bidderName) : null;
   updateBidDisplay(amount, bidCount, topBidder);
   renderBidHistory(bids || []);
 });
@@ -345,6 +345,11 @@ function showToast(type, title, body) {
 const fmt = v => '฿' + Number(v).toLocaleString('en-US');
 function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
 function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function initials(name) {
+  return String(name || '').trim().split(/\s+/)
+    .map(w => w[0]?.toUpperCase() + '.')
+    .join('');
+}
 function formatTime(iso) {
   return new Date(iso).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }

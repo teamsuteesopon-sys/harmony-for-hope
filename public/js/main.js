@@ -138,7 +138,7 @@ socket.on('newBid', ({ artworkId, currentBid, bid, artworkTitle }) => {
   addFeedItem(bid, artworkTitle, artworkId);
 
   // Toast notification
-  showToast('bid', `New bid on <strong>${artworkTitle}</strong>`, `${bid.bidderName} — ${fmt(bid.amount)}`);
+  showToast('bid', `New bid on <strong>${artworkTitle}</strong>`, `${initials(bid.bidderName)} — ${fmt(bid.amount)}`);
 });
 
 // ── Feed ──
@@ -152,7 +152,7 @@ function addFeedItem(bid, artworkTitle, artworkId) {
   item.innerHTML = `
     <div class="feed-dot"></div>
     <div class="feed-text">
-      <strong>${escHtml(bid.bidderName)}</strong> bid <strong>${fmt(bid.amount)}</strong> on
+      <strong>${escHtml(initials(bid.bidderName))}</strong> bid <strong>${fmt(bid.amount)}</strong> on
       <a href="/artwork.html?id=${artworkId}" style="color:var(--purple-light)">${escHtml(artworkTitle)}</a>
     </div>
     <div class="feed-time">${timeAgo(bid.timestamp)}</div>
@@ -187,6 +187,11 @@ function showToast(type, title, body) {
 const fmt = v => '฿' + Number(v).toLocaleString('en-US');
 function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function initials(name) {
+  return String(name || '').trim().split(/\s+/)
+    .map(w => w[0]?.toUpperCase() + '.')
+    .join('');
 }
 function timeAgo(iso) {
   const diff = (Date.now() - new Date(iso).getTime()) / 1000;
