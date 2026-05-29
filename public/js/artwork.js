@@ -44,7 +44,7 @@ function renderArtwork(a) {
   const estEl = document.getElementById('artwork-estimated-value');
   if (estEl) {
     if (a.estimatedValue) {
-      estEl.textContent = `Estimated Value: ${fmt(a.estimatedValue)}`;
+      estEl.textContent = `Value: ${fmt(a.estimatedValue)}`;
       estEl.style.display = 'block';
     } else {
       estEl.style.display = 'none';
