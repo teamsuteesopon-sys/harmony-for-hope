@@ -534,39 +534,6 @@ def api_cancel_bid():
     return jsonify({"error": "Bid ID not found for this item."}), 404
 
 
-@app.route("/api/admin/restore", methods=["POST"])
-def api_admin_restore():
-    data = request.get_json(silent=True) or {}
-    if data.get("pw") != ADMIN_PASSWORD:
-        return jsonify({"error": "Unauthorized"}), 401
-    bids = data.get("bids", [])
-    inserted = 0
-    for b in bids:
-        aid = int(b["artworkId"])
-        d = bid_data.get(aid)
-        if not d:
-            continue
-        # Skip if bid ID already exists
-        if any(x["id"] == b["id"] for x in d["bids"]):
-            continue
-        bid = {
-            "id":         b["id"],
-            "amount":     float(b["amount"]),
-            "bidderName": b["bidderName"],
-            "firstName":  b.get("firstName", ""),
-            "lastName":   b.get("lastName", ""),
-            "mobile":     b.get("mobile", ""),
-            "email":      b.get("email", ""),
-            "attending":  b.get("attending", ""),
-            "timestamp":  b["timestamp"],
-        }
-        d["bids"].append(bid)
-        d["bids"].sort(key=lambda x: x["amount"], reverse=True)
-        d["currentBid"] = d["bids"][0]["amount"]
-        save_bid(aid, bid)
-        inserted += 1
-    return jsonify({"inserted": inserted})
-
 
 @app.route("/api/stats")
 def api_stats():
