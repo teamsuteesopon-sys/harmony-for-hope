@@ -243,15 +243,23 @@ ARTWORKS = [
 ]
 
 # ── Database setup ─────────────────────────────────────────────────────────────
-_db_path = os.environ.get("DB_PATH", "bids.db")
-# Make sure the directory exists
+# Use DB_PATH env var if set, otherwise auto-detect /data (Render persistent disk),
+# otherwise fall back to local bids.db
+if os.environ.get("DB_PATH"):
+    _db_path = os.environ["DB_PATH"]
+elif os.path.isdir("/data") and os.access("/data", os.W_OK):
+    _db_path = "/data/bids.db"
+else:
+    _db_path = "bids.db"
+
 _db_dir = os.path.dirname(_db_path)
 if _db_dir and not os.path.exists(_db_dir):
     try:
         os.makedirs(_db_dir, exist_ok=True)
     except Exception:
-        _db_path = "bids.db"  # fallback to local file
+        _db_path = "bids.db"
 DB_PATH = _db_path
+print(f"[DB] Using database at: {DB_PATH}")
 
 def db_connect():
     conn = sqlite3.connect(DB_PATH)
